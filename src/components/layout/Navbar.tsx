@@ -1,41 +1,47 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Menu, Moon, Sun, X } from "lucide-react"
-import { useEffect, useState } from "react"
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Menu, Moon, Sun, X, LogOut } from "lucide-react";
+import { useEffect, useState } from "react";
+
 import { signOut, useSession } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button"
-import { toast } from "../ui/toast"
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
+
 import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { LogOut } from "lucide-react";
+
 import { FaChevronDown, FaUser } from "react-icons/fa";
 
+// Navigation items
 const navigation = [
   { label: "Home", href: "/" },
   { label: "Explore Studios", href: "/studios" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "About Us", href: "/#about-us" },
-]
+];
 
-  // Check active route
+// Check active route
 const isActiveRoute = (pathname: string, href: string) => {
   if (href === "/") {
-    return pathname === "/"
+    return pathname === "/";
   }
 
-  return href.startsWith("/#") ? false : pathname.startsWith(href)
-}
+  return href.startsWith("/#") ? false : pathname.startsWith(href);
+};
 
-// Function to get a valid image URL from Google Drive or any other source
+// Get valid image URL
 const getImageUrl = (image?: string | null) => {
   const imageUrl = image?.trim();
+
   if (!imageUrl) return null;
 
   try {
     const url = new URL(imageUrl);
+
     const fileId = url.pathname.match(/\/file\/d\/([^/]+)/)?.[1];
 
     if (fileId && url.hostname === "drive.google.com") {
@@ -50,18 +56,21 @@ const getImageUrl = (image?: string | null) => {
 
 const Navbar = () => {
   const pathname = usePathname();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedHref, setSelectedHref] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(false);
 
-  // Get the current session and user information (client side)
+  // Get current session
   const { data: session } = useSession();
+
   const user = session?.user;
   const imageUrl = getImageUrl(user?.image);
 
-  // Handle sign out and display a toast notification if there's an error
+  // Handle sign out
   const handleSignOut = async () => {
     const { error } = await signOut();
+
     if (error) {
       toast.add({
         title: "SignOut failed",
@@ -77,6 +86,7 @@ const Navbar = () => {
     const shouldUseDark = savedTheme === "dark";
 
     document.documentElement.classList.toggle("dark", shouldUseDark);
+
     const frameId = window.requestAnimationFrame(() => {
       setIsDark(shouldUseDark);
     });
@@ -87,7 +97,7 @@ const Navbar = () => {
   // Close mobile menu
   const closeMenu = () => setIsMenuOpen(false);
 
-  // Select a navigation item
+  // Select navigation item
   const selectNavigationItem = (href: string) => {
     setSelectedHref(href);
     closeMenu();
@@ -98,111 +108,134 @@ const Navbar = () => {
     const nextIsDark = !isDark;
 
     document.documentElement.classList.toggle("dark", nextIsDark);
+
     window.localStorage.setItem("studiospace-theme", nextIsDark ? "dark" : "light");
+
     setIsDark(nextIsDark);
   };
 
+  // Navigation link
+  const renderNavigation = (mobile = false) =>
+    navigation.map((item) => {
+      const active = selectedHref === item.href || (selectedHref === null && isActiveRoute(pathname, item.href));
+
+      return (
+        <Link key={item.label} href={item.href} className={`rounded-lg ${mobile ? "px-3 py-2.5 text-[15px]" : "px-3.5 py-2 text-[15px]"} font-bold transition-colors ${active ? "bg-primary/10 text-primary dark:bg-accent/20 dark:text-accent-lime" : "text-foreground hover:bg-muted"}`} aria-current={active ? "page" : undefined} onClick={() => selectNavigationItem(item.href)}>
+          {item.label}
+        </Link>
+      );
+    });
+
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-xl">
-      {/* Navigation bar */}
-      <div className="container mx-auto flex h-18 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5 rounded-lg outline-none transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring" onClick={closeMenu} aria-label="StudioSpace home">
-          <Image src="/images/logo.png" alt="StudioSpace" width={42} height={42} className="size-10 rounded-xl object-cover" priority />
-          <span className="text-xl font-extrabold! tracking-tight">
+      {/* Main Navbar */}
+      <div className="container mx-auto grid h-18 grid-cols-3 items-center px-4 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:px-8">
+        {/* Left: Hamburger (Mobile & Tablet) */}
+        <Button variant="ghost" size="icon" className="col-start-1 justify-self-start lg:hidden" onClick={() => setIsMenuOpen((open) => !open)} aria-expanded={isMenuOpen} aria-controls="mobile-navigation" aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}>
+          {isMenuOpen ? <X /> : <Menu />}
+        </Button>
+
+        {/* Logo: Center on Mobile, Left on Desktop */}
+        <Link href="/" className="col-start-2 flex items-center justify-self-center gap-2.5 whitespace-nowrap lg:col-start-1 lg:justify-self-start" onClick={closeMenu} aria-label="StudioSpace home">
+          <Image src="/images/logo.png" alt="StudioSpace" width={42} height={42} className="size-9 rounded-xl object-cover sm:size-10" priority />
+
+          <span className="text-lg font-extrabold tracking-tight sm:text-xl">
             Studio<span className="text-primary">Space</span>
           </span>
         </Link>
 
-        {/* Main navigation */}
-        <nav className="hidden items-center gap-5 lg:flex" aria-label="Main navigation">
-          {navigation.map((item) => {
-            const active = selectedHref === item.href || (selectedHref === null && isActiveRoute(pathname, item.href));
-
-            return (
-              <Link key={item.label} href={item.href} className={`rounded-lg px-3.5 py-2 text-[15px] font-bold transition-colors ${active ? "bg-primary/10 text-primary underline decoration-primary/50 underline-offset-6 dark:bg-accent/20 dark:text-accent-lime dark:decoration-accent-lime/50" : "text-foreground hover:bg-muted hover:text-foreground"}`} aria-current={active ? "page" : undefined} onClick={() => selectNavigationItem(item.href)}>
-                {item.label}
-              </Link>
-            );
-          })}
+        {/* Center: Desktop Navigation */}
+        <nav className="hidden items-center justify-center gap-3 lg:col-start-2 lg:flex" aria-label="Main navigation">
+          {renderNavigation()}
         </nav>
 
-        {user ? (
-          <Popover>
-            <PopoverTrigger className="flex items-center gap-2 rounded-full border border-neutral-200 bg-white py-1 pl-1 pr-3 shadow-sm transition-colors hover:border-[#1e97b3]">
-              <Avatar className="h-8 w-8 border border-neutral-200 bg-neutral-100 ring-1 ring-white">
-                {imageUrl ? <AvatarImage src={imageUrl} alt={user?.name || "User"} referrerPolicy="no-referrer" /> : null}
-                <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
-              </Avatar>
-              <span className="hidden max-w-24 truncate text-sm font-medium text-neutral-900 lg:inline">{user?.name?.trim().split(/\s+/)[0] || "User"}</span>
-              <FaChevronDown className="size-3 text-neutral-500" aria-hidden="true" />
-            </PopoverTrigger>
-            <PopoverContent className="w-65 rounded-lg border border-neutral-200 bg-white p-4 shadow-lg">
-              <PopoverHeader>
-                <PopoverDescription className="text-base text-neutral-500 -mb-1">Signed in as</PopoverDescription>
-                <PopoverTitle className="text-lg font-bold text-black">{user?.name || "User"}</PopoverTitle>
-                <PopoverDescription className="text-sm text-neutral-600 -mt-1">{user?.email || "user@example.com"}</PopoverDescription>
-              </PopoverHeader>
-              <div>
-                <Link href="/profile" aria-label="Profile" className="flex items-center justify-center gap-2 border rounded-lg whitespace-nowrap text-lg font-semibold text-neutral-900 hover:border-[#1e97b3] shadow-sm py-2 transition-colors mt-2">
-                  <FaUser className="text-base -mt-1 " />
-                  <span className="hidden lg:inline">Profile</span>
-                </Link>
+        {/* Right: User Profile / Authentication */}
+        <div className="col-start-3 flex items-center justify-self-end gap-2">
+          {user ? (
+            <Popover>
+              <PopoverTrigger className="flex items-center justify-self-end gap-2 rounded-full border border-neutral-200 bg-white p-1 shadow-sm transition-colors hover:border-[#1e97b3] dark:border-border dark:bg-bg-page">
+                <Avatar className="size-9 border border-neutral-200 bg-neutral-100 dark:border-border dark:bg-bg-page">
+                  {imageUrl ? <AvatarImage src={imageUrl} alt={user?.name || "User"} referrerPolicy="no-referrer" /> : null}
 
-                <Button type="button" onClick={handleSignOut} className="mt-4  bg-white flex cursor-pointer items-center gap-2 text-left text-lg text-[#f50039] transition-colors hover:bg-white hover:text-[#8b0524]">
-                  <LogOut className="size-5.5" />
-                  Sign Out
+                  <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
+                </Avatar>
+
+                <span className="hidden max-w-24 truncate text-sm font-medium text-neutral-900 lg:inline dark:text-foreground">{user?.name?.trim().split(/\s+/)[0] || "User"}</span>
+
+                <FaChevronDown className="hidden size-3 text-neutral-500 lg:inline dark:text-muted-foreground" />
+              </PopoverTrigger>
+
+              <PopoverContent className="w-65 rounded-lg border border-neutral-200 bg-white p-4 text-neutral-900 shadow-lg dark:border-border dark:bg-bg-page dark:text-foreground">
+                <PopoverHeader>
+                  <div className="flex items-center justify-between">
+                    <PopoverDescription className="text-base text-neutral-500 dark:text-muted-foreground">Signed in as</PopoverDescription>
+
+                    <Button variant="outline" size="icon" onClick={toggleTheme} aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}>
+                      {isDark ? <Sun /> : <Moon />}
+                    </Button>
+                  </div>
+
+                  <PopoverTitle className="text-lg font-bold text-black dark:text-foreground">{user?.name || "User"}</PopoverTitle>
+
+                  <PopoverDescription className="text-sm text-neutral-600 dark:text-muted-foreground">{user?.email || "user@example.com"}</PopoverDescription>
+                </PopoverHeader>
+
+                <div>
+                  <Link href="/profile" className="mt-2 flex items-center justify-center gap-2 rounded-lg border py-2 text-lg font-semibold text-neutral-900 shadow-sm transition-colors hover:border-[#087a43] dark:border-border dark:text-foreground dark:hover:border-primary">
+                    <FaUser className="text-base" />
+                    Profile
+                  </Link>
+
+                  <Button type="button" onClick={handleSignOut} className="mt-4 flex w-full cursor-pointer items-center gap-2 bg-white text-left text-lg text-[#f50039] transition-colors hover:bg-white hover:text-[#8b0524] dark:bg-bg-page dark:hover:bg-muted">
+                    <LogOut className="size-5" />
+                    Sign Out
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <>
+              {/* Desktop Actions */}
+              <div className="hidden items-center gap-2 lg:flex">
+                <Button variant="outline" size="icon" onClick={toggleTheme} aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}>
+                  {isDark ? <Sun /> : <Moon />}
+                </Button>
+
+                <Button nativeButton={false} variant="outline" render={<Link href="/login" />} className="px-5.5 py-4.5 text-sm font-medium text-foreground hover:bg-muted">
+                  Login
+                </Button>
+
+                <Button nativeButton={false} render={<Link href="/signup" />} className="px-4.5 py-4.5 text-sm font-medium">
+                  Register
                 </Button>
               </div>
-            </PopoverContent>
-          </Popover>
-        ) : (
-          <div className="hidden items-center gap-2 lg:flex">
-            <Button variant="outline" size="icon" onClick={toggleTheme} aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"} title={isDark ? "Switch to light theme" : "Switch to dark theme"}>
-              {isDark ? <Sun /> : <Moon />}
-            </Button>
-            <Button nativeButton={false} variant="outline" render={<Link href="/login" />} className="px-5.5 py-4.5 text-sm font-medium text-foreground hover:bg-muted hover:text-foreground">
-              Login
-            </Button>
-            <Button className="px-4.5 py-4.5 text-sm text-center font-medium hover:bg-dark-green dark:hover:bg-accent-lime dark:hover:text-accent-foreground" nativeButton={false} render={<Link href="/signup" />}>
-              Register
-            </Button>
-          </div>
-        )}
-
-        <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setIsMenuOpen((open) => !open)} aria-expanded={isMenuOpen} aria-controls="mobile-navigation" aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}>
-          {isMenuOpen ? <X /> : <Menu />}
-        </Button>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile & Tablet Menu */}
       {isMenuOpen && (
         <div id="mobile-navigation" className="border-t border-border/70 bg-background lg:hidden">
-          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6 " aria-label="Mobile navigation">
-            {navigation.map((item) => {
-              const active = selectedHref === item.href || (selectedHref === null && isActiveRoute(pathname, item.href));
+          <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6" aria-label="Mobile navigation">
+            {renderNavigation(true)}
 
-              return (
-                <Link key={item.label} href={item.href} className={`rounded-lg px-3 py-2.5 text-[15px] font-bold transition-colors ${active ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted hover:text-foreground"}`} aria-current={active ? "page" : undefined} onClick={() => selectNavigationItem(item.href)}>
-                  {item.label}
-                </Link>
-              );
-            })}
-            <div className="mt-3 flex gap-2 border-t border-border/70 pt-4 lg:hidden">
-              <Button variant="outline" size="icon" onClick={toggleTheme} aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"} title={isDark ? "Switch to light theme" : "Switch to dark theme"}>
-                {isDark ? <Sun /> : <Moon />}
-              </Button>
-              <Button nativeButton={false} variant="outline" render={<Link href="/login" />} className="flex-1 px-5.5 py-4.5 text-sm font-medium text-foreground hover:bg-muted hover:text-foreground">
-                Login
-              </Button>
-              <Button nativeButton={false} render={<Link href="/signup" />} className="flex-1 px-4.5 py-4.5 text-sm text-center font-medium hover:bg-dark-green dark:hover:bg-accent-lime dark:hover:text-accent-foreground">
-                Register
-              </Button>
-            </div>
+            {!user && (
+              
+              <div className="mt-3 flex gap-2 border-t border-border/70 pt-4 lg:hidden">
+                 <Button nativeButton={false} variant="outline" render={<Link href="/login" />} className="flex-1 px-5.5 py-4.5 text-sm font-medium text-foreground hover:bg-muted hover:text-foreground">
+                   Login
+                </Button>
+                <Button nativeButton={false} render={<Link href="/signup" />} className="flex-1 px-4.5 py-4.5 text-sm text-center font-medium hover:bg-dark-green dark:hover:bg-accent-lime dark:hover:text-accent-foreground">
+                   Register
+                 </Button>
+              </div>
+            )}
           </nav>
         </div>
       )}
     </header>
   );
-};;;
+};
 
 export default Navbar;
