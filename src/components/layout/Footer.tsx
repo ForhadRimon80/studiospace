@@ -22,7 +22,7 @@ const categories = [
 const Footer = () => {
   return (
     <footer className="mt-auto bg-dark-green text-white dark:bg-[#0b2419]">
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-8 py-8 sm:px-10 lg:grid-cols-[1.25fr_0.85fr_0.95fr_1.15fr] lg:gap-0 lg:px-10 lg:py-7">
+      <div className="container mx-auto grid gap-8 px-8 py-8 sm:px-10 lg:grid-cols-[1.25fr_0.85fr_0.95fr_1.15fr] lg:gap-0 lg:px-10 lg:py-7">
         <div className="lg:border-r lg:border-white/50 lg:pr-12">
           <Link href="/" className="inline-flex rounded-lg focus-visible:ring-2 focus-visible:ring-accent-lime">
             <Image
@@ -136,7 +136,7 @@ const Footer = () => {
       </div>
 
       <div className="border-t border-white/20">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-8 py-6 text-sm text-white/70 sm:px-10 md:flex-row md:items-center md:justify-between lg:px-10">
+        <div className="container mx-auto flex flex-col gap-4 px-8 py-6 text-sm text-white/70 sm:px-10 md:flex-row md:items-center md:justify-between lg:px-10">
           <p>© 2026 StudioSpace. All rights reserved.</p>
           <nav className="flex flex-wrap gap-x-4 gap-y-2" aria-label="Legal navigation">
             <Link href="/terms" className="transition-colors hover:text-white">
