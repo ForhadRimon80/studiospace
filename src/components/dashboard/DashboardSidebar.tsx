@@ -1,9 +1,10 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarDays, Grid2X2, Home, LogOut, UserRound, X } from "lucide-react";
+import { CalendarDays, LayoutDashboard, CirclePlus, LogOut, Heart, X, House, Building2 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import { usePathname } from "next/navigation";
 
 interface DashboardSidebarProps {
   isSidebarOpen: boolean;
@@ -11,12 +12,15 @@ interface DashboardSidebarProps {
 }
 
 const DashboardSidebar = ({ isSidebarOpen, setIsSidebarOpen }: DashboardSidebarProps) => {
+    const pathname = usePathname();
+
   const navLinks = [
-    { label: "Dashboard", icon: Grid2X2, href: "/dashboard" },
-    { label: "Add New Studio", icon: Home, href: "/add-new-studio" },
-    { label: "My Listings", icon: Grid2X2, href: "/dashboard/my-listings" },
+    { label: "Home", icon: House, href: "/" },
+    { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
+    { label: "Add New Studio", icon: CirclePlus, href: "/add-new-studio" },
+    { label: "My Listings", icon: Building2, href: "/dashboard/my-listings" },
     { label: "My Bookings", icon: CalendarDays, href: "/dashboard/my-bookings" },
-    { label: "Profile", icon: UserRound, href: "/dashboard/profile" },
+    { label: "Saved Wishlist", icon: Heart, href: "/dashboard/profile" },
   ];
 
   return (
@@ -27,7 +31,8 @@ const DashboardSidebar = ({ isSidebarOpen, setIsSidebarOpen }: DashboardSidebarP
       <aside className={`fixed inset-y-0 left-0 z-50 flex w-60 flex-col bg-[#064e32] text-white transition-transform duration-300 lg:translate-x-0 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
         {/* Profile */}
         <div className="relative px-6 py-8 text-center">
-          <Button type="button" variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)} className="absolute right-3 top-3 text-white hover:bg-white/10 hover:text-white lg:hidden" aria-label="Close sidebar">
+          {/* Close Sidebar */}
+          <Button type="button" variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)} className="absolute right-3 top-3 text-white hover:bg-white/10 hover:text-white lg:hidden">
             <X />
           </Button>
 
@@ -42,12 +47,16 @@ const DashboardSidebar = ({ isSidebarOpen, setIsSidebarOpen }: DashboardSidebarP
 
         {/* Navigation */}
         <nav className="space-y-2 px-3 text-sm font-medium">
-          {navLinks.map(({ label, icon: Icon, href }) => (
-            <Link key={label} href={href} onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-4 rounded-xl px-4 py-3 text-white/90 transition-colors hover:bg-white/10">
-              <Icon className="size-5" />
-              {label}
-            </Link>
-          ))}
+          {navLinks.map(({ label, icon: Icon, href }) => {
+            const isActive = pathname === href;
+
+            return (
+              <Link key={label} href={href} onClick={() => setIsSidebarOpen(false)} className={`flex items-center gap-4 rounded-xl px-4 py-3 transition-colors ${isActive ? "bg-[#0a9b50] text-white" : "text-white/90 hover:bg-white/10"}`}>
+                <Icon className="size-5" />
+                {label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Logout */}

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Moon, Sun, X, LogOut, CirclePlus, Building2, CalendarDays, Heart } from "lucide-react";
+import { Menu, Moon, Sun, X, LogOut, CirclePlus, Building2, CalendarDays, Heart, LayoutDashboard } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { signOut, useSession } from "@/lib/auth-client";
@@ -14,7 +14,7 @@ import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitl
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { FaChevronDown, FaUser } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 
 // Navigation items
 const navigation = [
@@ -183,7 +183,7 @@ const Navbar = () => {
                 <div>
                   <div>
                     <Link href="/dashboard" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <FaUser className="size-4" />
+                      <LayoutDashboard className="size-4" />
                       Dashboard
                     </Link>
                     <Link href="/add-new-studio" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
@@ -203,10 +203,9 @@ const Navbar = () => {
                       Saved Wishlist
                     </Link>
                   </div>
-
-                  <Button type="button" onClick={handleSignOut} className="mt-4 flex w-full cursor-pointer items-center gap-2 bg-white text-left text-lg text-[#f50039] transition-colors hover:bg-white hover:text-[#8b0524] dark:bg-bg-page dark:hover:bg-muted">
+                  <Button type="button" variant="outline" onClick={handleSignOut} className="mt-4 py-5 text-[#f50039] border hover:border-[#db0638] bg-white transition-colors  dark:hover:border-[#db0638] flex w-full cursor-pointer items-center justify-center gap-2 text-lg hover:bg-white hover:text-[#b1072e]">
                     <LogOut className="size-5" />
-                    Sign Out
+                    Log Out
                   </Button>
                 </div>
               </PopoverContent>
