@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Moon, Sun, X, LogOut } from "lucide-react";
+import { Menu, Moon, Sun, X, LogOut, CirclePlus, Building2, CalendarDays, Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { signOut, useSession } from "@/lib/auth-client";
@@ -181,10 +181,28 @@ const Navbar = () => {
                 </PopoverHeader>
 
                 <div>
-                  <Link href="/profile" className="mt-2 flex items-center justify-center gap-2 rounded-lg border py-2 text-lg font-semibold text-neutral-900 shadow-sm transition-colors hover:border-[#087a43] dark:border-border dark:text-foreground dark:hover:border-primary">
-                    <FaUser className="text-base" />
-                    Profile
-                  </Link>
+                  <div>
+                    <Link href="/dashboard" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <FaUser className="size-4" />
+                      Dashboard
+                    </Link>
+                    <Link href="/add-new-studio" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <CirclePlus className="size-4" />
+                      Add New Studio
+                    </Link>
+                    <Link href="/my-studio-listings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <Building2 className="size-4" />
+                      My Studio Listings
+                    </Link>
+                    <Link href="/my-bookings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <CalendarDays className="size-4" />
+                      My Bookings
+                    </Link>
+                    <Link href="/save-wishlist" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <Heart className="size-4" />
+                      Saved Wishlist
+                    </Link>
+                  </div>
 
                   <Button type="button" onClick={handleSignOut} className="mt-4 flex w-full cursor-pointer items-center gap-2 bg-white text-left text-lg text-[#f50039] transition-colors hover:bg-white hover:text-[#8b0524] dark:bg-bg-page dark:hover:bg-muted">
                     <LogOut className="size-5" />
@@ -221,14 +239,13 @@ const Navbar = () => {
             {renderNavigation(true)}
 
             {!user && (
-              
               <div className="mt-3 flex gap-2 border-t border-border/70 pt-4 lg:hidden">
-                 <Button nativeButton={false} variant="outline" render={<Link href="/login" />} className="flex-1 px-5.5 py-4.5 text-sm font-medium text-foreground hover:bg-muted hover:text-foreground">
-                   Login
+                <Button nativeButton={false} variant="outline" render={<Link href="/login" />} className="flex-1 px-5.5 py-4.5 text-sm font-medium text-foreground hover:bg-muted hover:text-foreground">
+                  Login
                 </Button>
                 <Button nativeButton={false} render={<Link href="/signup" />} className="flex-1 px-4.5 py-4.5 text-sm text-center font-medium hover:bg-dark-green dark:hover:bg-accent-lime dark:hover:text-accent-foreground">
-                   Register
-                 </Button>
+                  Register
+                </Button>
               </div>
             )}
           </nav>
