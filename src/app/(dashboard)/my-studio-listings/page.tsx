@@ -78,12 +78,12 @@ const MyStudioListingsPage = async () => {
 
         {/* Studio Listings */}
         {studios.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {studios.map((studio) => (
               <Card key={studio._id} className="cursor-pointer overflow-hidden border-[#e1ebe6] bg-white p-0 shadow-sm transition-shadow hover:shadow-md dark:border-border dark:bg-bg-surface">
                 {/* Image */}
                 <div className="relative h-70">
-                  <Image src={studio.imageUrl} alt={studio.title} loading="eager" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
+                  <Image src={studio.imageUrl} alt={studio.title} loading="eager" unoptimized fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
                 </div>
 
                 {/* Studio Information */}
@@ -110,7 +110,7 @@ const MyStudioListingsPage = async () => {
                   </div>
 
                   {/* Pricing + Actions */}
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                  <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap gap-2">
                       <p className="inline-flex items-center gap-1 rounded-full bg-[#d9f9df] px-3 py-2 text-xs font-semibold text-[#087a43] dark:bg-[#173d2c] dark:text-[#b8f36b]">
                         Hourly Rate: ${studio.hourlyRate}
@@ -121,8 +121,8 @@ const MyStudioListingsPage = async () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <EditMyStudioDialog studio={studio} />
-                        <DeleteMyStudioDialog studio={studio} />
+                      <EditMyStudioDialog studio={studio} />
+                      <DeleteMyStudioDialog studio={studio} />
                     </div>
                   </div>
                 </CardContent>

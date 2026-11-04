@@ -5,16 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Moon, Sun, X, LogOut, CirclePlus, Building2, CalendarDays, Heart, LayoutDashboard } from "lucide-react";
 import { useEffect, useState } from "react";
-
 import { signOut, useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-
 import { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger } from "@/components/ui/popover";
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import { FaChevronDown } from "react-icons/fa";
+
 
 // Navigation items
 const navigation = [
@@ -58,7 +55,6 @@ const Navbar = () => {
   const pathname = usePathname();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedHref, setSelectedHref] = useState<string | null>(null);
   const [isDark, setIsDark] = useState(false);
 
   // Get current session
@@ -97,12 +93,6 @@ const Navbar = () => {
   // Close mobile menu
   const closeMenu = () => setIsMenuOpen(false);
 
-  // Select navigation item
-  const selectNavigationItem = (href: string) => {
-    setSelectedHref(href);
-    closeMenu();
-  };
-
   // Toggle theme
   const toggleTheme = () => {
     const nextIsDark = !isDark;
@@ -117,10 +107,10 @@ const Navbar = () => {
   // Navigation link
   const renderNavigation = (mobile = false) =>
     navigation.map((item) => {
-      const active = selectedHref === item.href || (selectedHref === null && isActiveRoute(pathname, item.href));
+      const active = isActiveRoute(pathname, item.href);
 
       return (
-        <Link key={item.label} href={item.href} className={`rounded-lg ${mobile ? "px-3 py-2.5 text-[15px]" : "px-3.5 py-2 text-[15px]"} font-bold transition-colors ${active ? "bg-primary/10 text-primary dark:bg-accent/20 dark:text-accent-lime" : "text-foreground hover:bg-muted"}`} aria-current={active ? "page" : undefined} onClick={() => selectNavigationItem(item.href)}>
+        <Link key={item.label} href={item.href} className={`rounded-lg ${mobile ? "px-3 py-2.5 text-[15px]" : "px-3.5 py-2 text-[15px]"} font-bold transition-colors ${active ? "bg-primary/10 text-primary dark:bg-accent/20 dark:text-accent-lime" : "text-foreground hover:bg-muted"}`} aria-current={active ? "page" : undefined} onClick={closeMenu}>
           {item.label}
         </Link>
       );
@@ -152,64 +142,69 @@ const Navbar = () => {
         {/* Right: User Profile / Authentication */}
         <div className="col-start-3 flex items-center justify-self-end gap-2">
           {user ? (
-            <Popover>
-              <PopoverTrigger className="flex items-center justify-self-end gap-2 rounded-full border border-neutral-200 bg-white p-1 shadow-sm transition-colors hover:border-[#1e97b3] dark:border-border dark:bg-bg-page">
-                <Avatar className="size-9 border border-neutral-200 bg-neutral-100 dark:border-border dark:bg-bg-page">
-                  {imageUrl ? <AvatarImage src={imageUrl} alt={user?.name || "User"} referrerPolicy="no-referrer" /> : null}
+            <>
+              <Button className="hidden sm:inline-flex" variant="outline" size="icon" onClick={toggleTheme} aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}>
+                {isDark ? <Sun /> : <Moon />}
+              </Button>
+              <Popover>
+                <PopoverTrigger className="flex items-center justify-self-end gap-2 rounded-full border border-neutral-200 bg-white p-1 shadow-sm transition-colors hover:border-primary dark:hover:border-primary dark:border-border dark:bg-bg-page">
+                  <Avatar className="size-9 border border-neutral-200 bg-neutral-100 dark:border-border dark:bg-bg-page">
+                    {imageUrl ? <AvatarImage src={imageUrl} alt={user?.name || "User"} referrerPolicy="no-referrer" /> : null}
 
-                  <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
-                </Avatar>
+                    <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
+                  </Avatar>
 
-                <span className="hidden max-w-24 truncate text-xs! font-medium text-neutral-900 lg:inline dark:text-foreground">{user?.name?.trim().split(/\s+/)[0] || "User"}</span>
+                  <span className="hidden max-w-24 truncate text-xs! font-medium text-neutral-900 lg:inline dark:text-foreground">{user?.name?.trim().split(/\s+/)[0] || "User"}</span>
 
-                <FaChevronDown className="hidden size-2.5! mr-1 text-neutral-500 lg:inline dark:text-muted-foreground" />
-              </PopoverTrigger>
+                  <FaChevronDown className="hidden size-2.5! mr-1 text-neutral-500 lg:inline dark:text-muted-foreground" />
+                </PopoverTrigger>
 
-              <PopoverContent className="w-65 rounded-lg border border-neutral-200 bg-white p-4 text-neutral-900 shadow-lg dark:border-border dark:bg-bg-page dark:text-foreground">
-                <PopoverHeader>
-                  <div className="flex items-center justify-between">
-                    <PopoverDescription className="text-xs! text-neutral-500 dark:text-muted-foreground">Signed in as</PopoverDescription>
+                <PopoverContent className="w-65 rounded-lg border border-neutral-200 bg-white p-4 text-neutral-900 shadow-lg dark:border-border dark:bg-bg-page dark:text-foreground">
+                  <PopoverHeader>
+                    <div className="flex items-center justify-between">
+                      <PopoverDescription className="text-xs! text-neutral-500 dark:text-muted-foreground">Signed in as</PopoverDescription>
 
-                    <Button variant="outline" size="icon" onClick={toggleTheme} aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}>
-                      {isDark ? <Sun /> : <Moon />}
+                      <Button className="sm:hidden -mt-2" variant="outline" size="icon" onClick={toggleTheme} aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}>
+                        {isDark ? <Sun /> : <Moon />}
+                      </Button>
+                    </div>
+
+                    <PopoverTitle className="text-base! -mt-1.5 font-bold text-black dark:text-foreground">{user?.name || "User"}</PopoverTitle>
+
+                    <PopoverDescription className="text-xs! text-neutral-600 dark:text-muted-foreground">{user?.email || "user@example.com"}</PopoverDescription>
+                  </PopoverHeader>
+
+                  <div>
+                    <div>
+                      <Link href="/dashboard" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                        <LayoutDashboard className="size-3.5" />
+                        Dashboard
+                      </Link>
+                      <Link href="/add-new-studio" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                        <CirclePlus className="size-3.5" />
+                        Add New Studio
+                      </Link>
+                      <Link href="/my-studio-listings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                        <Building2 className="size-3.5" />
+                        My Studio Listings
+                      </Link>
+                      <Link href="/my-bookings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                        <CalendarDays className="size-3.5" />
+                        My Bookings
+                      </Link>
+                      <Link href="/save-wishlist" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                        <Heart className="size-3.5" />
+                        Saved Wishlist
+                      </Link>
+                    </div>
+                    <Button type="button" variant="outline" onClick={handleSignOut} className="mt-4 py-4 px-10 text-[#f50039] border hover:border-[#db0638] bg-white transition-colors  dark:hover:border-[#db0638] flex mx-auto cursor-pointer items-center justify-center gap-2 text-base! hover:bg-white hover:text-[#b1072e]">
+                      <LogOut className="size-4" />
+                      Log Out
                     </Button>
                   </div>
-
-                  <PopoverTitle className="text-base! -mt-1.5 font-bold text-black dark:text-foreground">{user?.name || "User"}</PopoverTitle>
-
-                  <PopoverDescription className="text-xs! text-neutral-600 dark:text-muted-foreground">{user?.email || "user@example.com"}</PopoverDescription>
-                </PopoverHeader>
-
-                <div>
-                  <div>
-                    <Link href="/dashboard" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <LayoutDashboard className="size-3.5" />
-                      Dashboard
-                    </Link>
-                    <Link href="/add-new-studio" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <CirclePlus className="size-3.5" />
-                      Add New Studio
-                    </Link>
-                    <Link href="/my-studio-listings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <Building2 className="size-3.5" />
-                      My Studio Listings
-                    </Link>
-                    <Link href="/my-bookings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <CalendarDays className="size-3.5" />
-                      My Bookings
-                    </Link>
-                    <Link href="/save-wishlist" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <Heart className="size-3.5" />
-                      Saved Wishlist
-                    </Link>
-                  </div>
-                  <Button type="button" variant="outline" onClick={handleSignOut} className="mt-4 py-4 px-10 text-[#f50039] border hover:border-[#db0638] bg-white transition-colors  dark:hover:border-[#db0638] flex mx-auto cursor-pointer items-center justify-center gap-2 text-base! hover:bg-white hover:text-[#b1072e]">
-                    <LogOut className="size-4" />
-                    Log Out
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
+            </>
           ) : (
             <>
               {/* Desktop Actions */}

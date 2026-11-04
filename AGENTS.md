@@ -8,51 +8,46 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# StudioSpace Project Guidelines
+# StudioSpace
 
-## Project Scope
+Peer-to-peer studio marketplace. Next.js 16 App Router, React 19, TypeScript strict, Tailwind v4, shadcn/ui (`base-nova` on Base UI). Imports use `@/*` → `src/*`.
 
-- StudioSpace is a peer-to-peer marketplace for creative studios and production spaces.
-- Follow the assignment requirements in the project brief: authentication, studio CRUD, bookings, responsive UI, loading/empty/not-found states, toast feedback, and light/dark theme support.
-- Do not use Lorem ipsum or browser `alert()` for user feedback. Use the existing shadcn Toast and custom modal components.
+## Run and verify
 
-## Architecture
+- `npm install`; `npm run dev`; `npm run lint` (runs bare `eslint`); `npm run build`.
+- There is no test runner, typecheck script, or CI workflow. Use `npx tsc --noEmit` for types. Fast check: `npm run lint` + `npx tsc --noEmit`; run `npm run build` before handoff.
+- `.env` is gitignored and required: `MONGODB_URI`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`.
 
-- This repository is a Next.js App Router application using TypeScript.
-- Use Tailwind CSS for styling and shadcn/ui components and primitives for the shared interface.
-- Use Better Auth for authentication and session management, with the MongoDB adapter where server configuration requires persistence.
-- Keep route-specific UI in `src/app` and reusable UI in `src/components`.
-- Prefer existing shadcn/ui primitives before adding new UI patterns or custom components.
-- Use the existing shadcn Carousel built on Embla for hero sliders; do not add Swiper or another carousel library.
-- Treat private routes and mutation actions as authenticated surfaces. Preserve the intended return route after login.
-- Read the relevant Next.js guide under `node_modules/next/dist/docs/` before changing framework APIs or conventions.
+## Architecture you would otherwise miss
 
-## UI and UX
+- The only API route in this repo is Better Auth: `src/app/api/auth/[...all]/route.ts`. Server config (`better-auth` + MongoDB adapter, database `studiospace`) is `src/lib/auth.ts`; client helpers are `src/lib/auth-client.ts`.
+- Studio CRUD lives in the adjacent `studiospace-server` Express app, not this repo. Its routes are:
+  - `POST /add-new-studio`
+  - `GET /my-studio-listings/:userId`
+  - `PATCH` / `DELETE /my-studio-listings/:studioId`
+  Start that server before testing studio management.
+- Route groups: `(main)` adds Navbar/Footer; `(dashboard)` is a client shell with sidebar/navbar. Dashboard routes are not auth-protected yet.
+- Server components read the session with `auth.api.getSession({ headers: await headers() })`; client components use `useSession()`.
 
-- Use the StudioSpace palette: primary green `#087A43`, dark green `#064E32`, accent lime `#B8F36B`, light green `#EAF8DC`, background `#FFFFFF`, surface white `#FFFFFF`, heading `#101820`, body text `#64748B`, border `#E2E8E5`, and error `#DC2626`.
-- Maintain a consistent StudioSpace visual system: typography, spacing, button styles, card dimensions, image ratios, and accessible contrast.
-- Keep layouts responsive across mobile, tablet, and desktop.
-- Use a branded skeleton or spinner during asynchronous work and a helpful empty state when a collection or search has no results.
-- Use the existing shadcn Toast for success and error feedback across authentication, studio CRUD, and booking actions.
-- Use the new X social logo rather than the retired Twitter bird.
+## Conventions that differ from defaults
 
-## Data and Security
+- Toasts: `toast.add({ title, description, type: "success" | "error" })` from `@/components/ui/toast`. `Toaster` is already mounted once in the root layout; don't add another or use `alert()`.
+- Components are Base UI, not Radix: compose with `render={<Link href="..." />}` (plus `nativeButton={false}` for Button-as-link), not `asChild`.
+- `cn` comes from the `cn` package (`import { cn } from "cn"`), not `clsx`/`tailwind-merge`. `src/lib/utils.ts` only re-exports it.
+- Tailwind v4 has no `tailwind.config.*`; tokens are declared in `@theme inline` in `src/app/globals.css`. Prefer semantic utilities (`bg-bg-page`, `bg-bg-surface`, `text-text-primary`, `text-text-secondary`, `text-primary-green`, `text-accent-lime`). Many existing components hardcode hex — match the surrounding file rather than introducing new colors.
+- Dark mode is the `.dark` class, toggled in `Navbar` and persisted under localStorage key `studiospace-theme`; there is no `next-themes`.
+- Use `src/components/ui/carousel.tsx` (Embla); don't add Swiper or another carousel library.
+- `next.config.ts` enables React Compiler and disables `cacheComponents`/`partialPrefetching`.
+- Home sections live in `src/components/home/`. The featured studio cards use static design data in `featured-studios-data.ts`; there is no home-page data fetch yet.
 
-- Studio and booking data must use the server API and MongoDB contracts; do not rely on client-only persistence for core operations.
-- Protect server mutations with JWTs stored in HTTPOnly cookies and return explicit unauthorized errors.
-- Prevent overlapping confirmed bookings before creating a reservation.
-- Validate form input on the client and server, including registration passwords: at least 6 characters with uppercase and lowercase letters.
+## Current state
 
-## Build and Test
+- Implemented: static home page design, login/signup, dashboard shell, add studio, my listings with edit/delete.
+- Placeholder or missing: `/studios` explore page, studio detail `/studios/[id]`, dashboard overview, bookings, wishlist, auth route protection, `loading.tsx` / `error.tsx` / `not-found.tsx`.
+- Navbar links to routes that do not exist yet (`/studios`, `/my-bookings`); the real signup route is `/signup`.
 
-- Install dependencies with `npm install`.
-- Run lint with `npm run lint`.
-- Run the production validation with `npm run build`.
-- Keep Tailwind CSS configuration and shadcn/ui component conventions consistent with the existing setup.
-- Prefer the smallest relevant validation command after each change, then run both commands before handoff when practical.
+## Delivery
 
-## Documentation and Delivery
-
-- Keep `README.md` meaningful and current with the website name, live URL, features, tech stack, local setup, and examiner test credentials.
-- Make notable changes in focused commits; the assignment expects at least 15 client-side commits.
-- Do not commit secrets, credentials, generated files, or temporary assignment assets.
+- `README.md` is still create-next-app boilerplate. Update it with site name, live URL, features, stack, local setup, and examiner test credentials when ready.
+- Keep notable changes in focused commits; the assignment expects at least 15 client-side commits.
+- Do not commit `.env`, secrets, generated files, or temporary assets.
