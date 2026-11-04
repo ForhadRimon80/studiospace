@@ -11,7 +11,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="min-h-screen bg-[#f7faf9] text-[#132330] dark:bg-bg-page dark:text-foreground">
       <DashboardSidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
 
-      <div className="lg:pl-60">
+      <div className="lg:pl-70">
         <DashboardNavbar setIsSidebarOpen={setIsSidebarOpen} />
 
         <main className="min-h-[calc(100vh-4rem)] p-5 sm:p-8">{children}</main>

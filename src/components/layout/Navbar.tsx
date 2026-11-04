@@ -160,51 +160,51 @@ const Navbar = () => {
                   <AvatarFallback>{user?.name?.charAt(0)?.toUpperCase() || "U"}</AvatarFallback>
                 </Avatar>
 
-                <span className="hidden max-w-24 truncate text-sm font-medium text-neutral-900 lg:inline dark:text-foreground">{user?.name?.trim().split(/\s+/)[0] || "User"}</span>
+                <span className="hidden max-w-24 truncate text-xs! font-medium text-neutral-900 lg:inline dark:text-foreground">{user?.name?.trim().split(/\s+/)[0] || "User"}</span>
 
-                <FaChevronDown className="hidden size-3 text-neutral-500 lg:inline dark:text-muted-foreground" />
+                <FaChevronDown className="hidden size-2.5! mr-1 text-neutral-500 lg:inline dark:text-muted-foreground" />
               </PopoverTrigger>
 
               <PopoverContent className="w-65 rounded-lg border border-neutral-200 bg-white p-4 text-neutral-900 shadow-lg dark:border-border dark:bg-bg-page dark:text-foreground">
                 <PopoverHeader>
                   <div className="flex items-center justify-between">
-                    <PopoverDescription className="text-base text-neutral-500 dark:text-muted-foreground">Signed in as</PopoverDescription>
+                    <PopoverDescription className="text-xs! text-neutral-500 dark:text-muted-foreground">Signed in as</PopoverDescription>
 
                     <Button variant="outline" size="icon" onClick={toggleTheme} aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}>
                       {isDark ? <Sun /> : <Moon />}
                     </Button>
                   </div>
 
-                  <PopoverTitle className="text-lg font-bold text-black dark:text-foreground">{user?.name || "User"}</PopoverTitle>
+                  <PopoverTitle className="text-base! -mt-1.5 font-bold text-black dark:text-foreground">{user?.name || "User"}</PopoverTitle>
 
-                  <PopoverDescription className="text-sm text-neutral-600 dark:text-muted-foreground">{user?.email || "user@example.com"}</PopoverDescription>
+                  <PopoverDescription className="text-xs! text-neutral-600 dark:text-muted-foreground">{user?.email || "user@example.com"}</PopoverDescription>
                 </PopoverHeader>
 
                 <div>
                   <div>
-                    <Link href="/dashboard" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <LayoutDashboard className="size-4" />
+                    <Link href="/dashboard" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <LayoutDashboard className="size-3.5" />
                       Dashboard
                     </Link>
-                    <Link href="/add-new-studio" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <CirclePlus className="size-4" />
+                    <Link href="/add-new-studio" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <CirclePlus className="size-3.5" />
                       Add New Studio
                     </Link>
-                    <Link href="/my-studio-listings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <Building2 className="size-4" />
+                    <Link href="/my-studio-listings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <Building2 className="size-3.5" />
                       My Studio Listings
                     </Link>
-                    <Link href="/my-bookings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <CalendarDays className="size-4" />
+                    <Link href="/my-bookings" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <CalendarDays className="size-3.5" />
                       My Bookings
                     </Link>
-                    <Link href="/save-wishlist" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-base font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
-                      <Heart className="size-4" />
+                    <Link href="/save-wishlist" className="mt-2 flex items-center gap-2 rounded-lg px-2.5 py-2 text-sm! font-sm! text-neutral-900  transition-colors dark:text-foreground hover:bg-primary/10  hover:dark:bg-accent/20">
+                      <Heart className="size-3.5" />
                       Saved Wishlist
                     </Link>
                   </div>
-                  <Button type="button" variant="outline" onClick={handleSignOut} className="mt-4 py-5 text-[#f50039] border hover:border-[#db0638] bg-white transition-colors  dark:hover:border-[#db0638] flex w-full cursor-pointer items-center justify-center gap-2 text-lg hover:bg-white hover:text-[#b1072e]">
-                    <LogOut className="size-5" />
+                  <Button type="button" variant="outline" onClick={handleSignOut} className="mt-4 py-4 px-10 text-[#f50039] border hover:border-[#db0638] bg-white transition-colors  dark:hover:border-[#db0638] flex mx-auto cursor-pointer items-center justify-center gap-2 text-base! hover:bg-white hover:text-[#b1072e]">
+                    <LogOut className="size-4" />
                     Log Out
                   </Button>
                 </div>

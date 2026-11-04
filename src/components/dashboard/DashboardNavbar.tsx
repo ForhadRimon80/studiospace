@@ -39,7 +39,7 @@ const DashboardNavbar = ({ setIsSidebarOpen }: DashboardNavbarProps) => {
         {/* Search - Left */}
         <div className="relative w-full max-w-90">
           <Input placeholder="Search anything..." className="h-9 w-full rounded-full border-[#dce6e1] bg-white pl-10 text-xs dark:border-border dark:bg-bg-surface dark:text-foreground dark:placeholder:text-muted-foreground" />
-          
+
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#80918b] size-5" />
         </div>
 

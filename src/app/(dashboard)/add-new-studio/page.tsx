@@ -2,11 +2,15 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { ArrowLeft, Car, Check, Headphones, Home, ImageIcon, Lightbulb, Wallpaper, RotateCcw, ArrowRight, ShieldCheck, Snowflake, Star, UserRound, Wifi, DollarSign, MicVocal, Sofa, Construction, PanelsTopLeft, Paintbrush } from "lucide-react";
+import { ArrowLeft, Car, Headphones, Home, ImageIcon, Lightbulb, Wallpaper, ArrowRight, ShieldCheck, Snowflake, Star, UserRound, Wifi, DollarSign, MicVocal, Sofa, Construction, PanelsTopLeft, Paintbrush } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/toast";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { Checkbox } from "@/components/ui/checkbox";
 
 
 const amenities = [
@@ -28,33 +32,71 @@ const studioCategories = ["Photography Studio", "Audio/Voice Studio", "Podcast R
 
 const AddNewStudioPage = () => {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const router = useRouter();
 
   const toggleAmenity = (amenity: string) => {
     setSelectedAmenities((current) => (current.includes(amenity) ? current.filter((item) => item !== amenity) : [...current, amenity]));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  // Get the current session and user information (client side)
+  const { data: session } = useSession();
+  const user = session?.user;
+  // console.log(user);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+
+    // Extract form data and convert it to an object
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
 
     const studioData = {
-      title: formData.get("title"),
-      hourlyRate: formData.get("hourlyRate"),
-      capacity: formData.get("capacity"),
-      location: formData.get("location"),
-      category: formData.get("category"),
-      securityDeposit: formData.get("securityDeposit"),
-      imageUrl: formData.get("imageUrl"),
-      overview: formData.get("overview"),
+      hostName: user?.name,
+      hostEmail: user?.email,
+      hostId: user?.id,
+      CreatedAt: new Date().toISOString(),
+      ...data,
       amenities: selectedAmenities,
+      views: "0", // Initialize views to 0
     };
+    // console.log(studioData);
 
-    console.log(studioData);
-  };
+    // Send the data to the backend
+    try {
+      const res = await fetch("http://localhost:5000/add-new-studio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(studioData),
+      });
 
-  const resetForm = () => {
-    setSelectedAmenities([]);
+      // Get the response from the backend, convert it to JSON, and log the returned data.
+      const afterSubmit = await res.json();
+      console.log("Data after submission:", afterSubmit);
+
+      if (!res.ok || !afterSubmit.insertedId) {
+        throw new Error(afterSubmit.message ?? "The Add New Studio form could not be submitted.");
+      } else {
+        toast.add({
+          title: "Submission successful",
+          description: "The Add New Studio form has been successfully submitted.",
+          type: "success",
+        });
+        form.reset(); // Reset the form after successful submission
+        setSelectedAmenities([]); // Reset selected amenities after successful submission
+        router.push("/my-studio-listings"); // Redirect to the My Listings page after successful submission
+      }
+    } catch (error) {
+      toast.add({
+        title: "Submission failed",
+        description: error instanceof Error ? error.message : "Something went wrong while submitting the Add New Studio form.",
+        type: "error",
+      });
+    }
+
   };
 
   return (
@@ -93,45 +135,51 @@ const AddNewStudioPage = () => {
               <CardContent className="grid gap-3 p-4 sm:grid-cols-2">
                 {/* Studio Title */}
                 <label className="space-y-1 font-semibold">
-                  <span>
+                  <span className="ml-1">
                     Studio Title <b className="text-red-500">*</b>
                   </span>
-                  <Input name="title" type="text" placeholder="Enter studio name..." required className="h-9 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
+                  <Input name="title" type="text" placeholder="Enter studio name..." required className="h-9 mt-1.5 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
                 </label>
 
                 {/* Hourly Rate */}
                 <label className="space-y-1 font-semibold">
-                  <span className="flex">
+                  <span className="flex ml-1">
                     Hourly Rate (<DollarSign className="size-4 mt-1" />)<b className="text-red-500">*</b>
                   </span>
-                  <Input name="hourlyRate" type="number" min="0" placeholder="Enter hourly rate" required className="h-9 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
+                  <Input name="hourlyRate" type="number" min="0" placeholder="Enter hourly rate" required className="h-9 m-0.5 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
                 </label>
 
                 {/* Maximum Capacity */}
                 <label className="space-y-1 font-semibold">
-                  <span>
+                  <span className="ml-1">
                     Maximum Capacity <b className="text-red-500">*</b>
                   </span>
-                  <Input name="maxCapacity" type="number" min="0" placeholder="Enter max people" required className="h-9 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
+                  <Input name="maxCapacity" type="number" min="0" placeholder="Enter max people" required className="h-9 mt-1.5 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
                 </label>
 
                 {/* Location / Address */}
                 <label className="space-y-1 font-semibold">
-                  <span>
+                  <span className="ml-1">
                     Location / Address <b className="text-red-500">*</b>
                   </span>
-                  <Input name="location" type="text" placeholder="Enter studio address" required className="h-9 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
+                  <Input name="location" type="text" placeholder="Enter studio address" required className="h-9 mt-1.5 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
                 </label>
 
                 {/* Category */}
                 <label className="space-y-1 font-semibold">
-                  <span>
+                  <span className="ml-1">
                     Category <b className="text-red-500">*</b>
                   </span>
 
-                  <select name="category" required defaultValue="Photography Studio" className="h-9 w-full rounded-lg border border-[#dce7e1] bg-white px-3 text-xs text-[#687a73] outline-none focus:border-[#087a43] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground">
+                  <select name="category" required defaultValue="Photography Studio" className="h-9 mt-1.5 w-full rounded-lg border border-[#dce7e1] bg-white px-3 text-xs text-[#687a73] outline-none focus:border-[#087a43] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground">
                     {studioCategories.map((category) => (
-                      <option key={category} value={category}>
+                      <option
+                        key={category}
+                        value={category}
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: "400",
+                        }}>
                         {category}
                       </option>
                     ))}
@@ -140,20 +188,20 @@ const AddNewStudioPage = () => {
 
                 {/* Security Deposit */}
                 <label className="space-y-1 font-semibold">
-                  <span className="flex">
+                  <span className="flex ml-1">
                     Security Deposit (<DollarSign className="size-4 mt-1" />) <b className="text-red-500">*</b>
                   </span>
 
-                  <Input name="securityDeposit" type="number" min="0" placeholder="Enter deposit amount" required className="h-9 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
+                  <Input name="securityDeposit" type="number" min="0" placeholder="Enter deposit amount" required className="h-9 mt-0.5 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
                 </label>
 
                 {/* Image URL */}
                 <label className="col-span-full space-y-1 font-semibold">
-                  <span>
+                  <span className="ml-1">
                     Image URL <b className="text-red-500">*</b>
                   </span>
 
-                  <Input name="imageUrl" type="url" placeholder="https://example.com/image.jpg" required className="h-9 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
+                  <Input name="imageUrl" type="url" placeholder="https://example.com/image.jpg" required className="h-9 mt-1.5 rounded-lg border-[#dce7e1] bg-white text-xs! text-[#132330] placeholder:text-[#737c79] dark:border-[#294239] dark:bg-[#1d3028] dark:text-foreground dark:placeholder:text-[#d1d8d5]" />
                 </label>
               </CardContent>
             </Card>
@@ -174,13 +222,13 @@ const AddNewStudioPage = () => {
                   const selected = selectedAmenities.includes(label);
 
                   return (
-                    <button key={label} type="button" onClick={() => toggleAmenity(label)} className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-left text-xs transition-colors ${selected ? "border-[#087a43] bg-[#edfaf1] text-[#087a43] dark:border-[#b8f36b] dark:bg-[#064e32] dark:text-[#b8f36b]" : "border-[#dce7e1] text-[#30453c] hover:border-[#8dc9a5] dark:border-[#294239] dark:text-[#f7f9f7] dark:hover:border-[#b8f36b]"}`}>
+                    <label key={label} className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-left text-xs transition-colors ${selected ? "border-[#087a43] bg-[#edfaf1] text-[#087a43] dark:border-[#b8f36b] dark:bg-[#064e32] dark:text-[#b8f36b]" : "border-[#dce7e1] text-[#30453c] hover:border-[#8dc9a5] dark:border-[#294239] dark:text-[#f7f9f7] dark:hover:border-[#b8f36b]"}`}>
+                      <Checkbox checked={selected} onCheckedChange={() => toggleAmenity(label)} />
+
                       <Icon className="size-4 shrink-0 text-[#0a9b50]" />
 
                       {label}
-
-                      {selected && <Check className="ml-auto size-3.5" />}
-                    </button>
+                    </label>
                   );
                 })}
               </CardContent>
@@ -216,23 +264,18 @@ const AddNewStudioPage = () => {
             <CardContent className="grid gap-3 p-4 sm:grid-cols-2">
               <label className="space-y-1 text-xs font-semibold">
                 Host Name
-                <Input value="Rimon Ahmed" readOnly className="mt-1 h-9 bg-[#f0f3f5] text-xs text-[#718078] dark:border-[#294239] dark:bg-[#1d3028] dark:text-[#b5c2bc]" />
+                <Input value={user?.name || ""} readOnly className="mt-1 h-9 bg-[#f0f3f5] text-xs text-[#718078] dark:border-[#294239] dark:bg-[#1d3028] dark:text-[#b5c2bc]" />
               </label>
 
               <label className="space-y-1 text-xs font-semibold">
                 Host Email
-                <Input value="rimon@gmail.com" readOnly className="mt-1 h-9 bg-[#f0f3f5] text-xs text-[#718078] dark:border-[#294239] dark:bg-[#1d3028] dark:text-[#b5c2bc]" />
+                <Input value={user?.email || "rimon@gmail.com"} readOnly className="mt-1 h-9 bg-[#f0f3f5] text-xs text-[#718078] dark:border-[#294239] dark:bg-[#1d3028] dark:text-[#b5c2bc]" />
               </label>
             </CardContent>
           </Card>
 
           {/* Form Actions */}
           <div className="mt-8 flex flex-col-reverse justify-center gap-3 rounded-xl border border-[#e1ebe6] bg-white p-3 shadow-sm dark:border-[#294239] dark:bg-bg-surface sm:flex-row">
-            <Button type="reset" variant="outline" onClick={resetForm} className="flex-1 rounded-xl border-[#0a9b50] bg-white py-5 text-[#087a43] hover:bg-[#edfaf1] dark:border-[#b8f36b] dark:bg-transparent dark:text-[#b8f36b] dark:hover:bg-[#1d3028]">
-              <RotateCcw className="size-4" />
-              Reset Form
-            </Button>
-
             <Button type="submit" className="flex-1 rounded-xl bg-[#0a9b50] py-5 text-white hover:bg-[#087a43]">
               Publish Studio Listing
               <ArrowRight className="size-4 mt-1" />
@@ -242,6 +285,6 @@ const AddNewStudioPage = () => {
       </form>
     </main>
   );
-};
+};;
 
 export default AddNewStudioPage;
