@@ -13,10 +13,10 @@ const quickLinks = [
 ]
 
 const categories = [
-  "Photo Studios",
-  "Sound Stages",
-  "Podcast Rooms",
-  "Music Suites",
+  "Fashion Studio",
+  "Event Spaces",
+  "Dance Studio",
+  "Creative Space/Loft",
 ]
 
 const Footer = () => {

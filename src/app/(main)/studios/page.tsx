@@ -1,22 +1,20 @@
-import { IStudio } from '@/lib/types/studiospace';
-import React from 'react';
+import StudiosExplorer from "@/components/studios/StudiosExplorer";
+import type { IStudio } from "@/lib/types/studiospace";
 
-const ExploreStudioPage = async () => {
+const ExploreStudioPage = async ({ searchParams }: { searchParams: Promise<{ category?: string | string[] }> }) => {
+  const { category } = await searchParams;
 
-    const res = await fetch("http://localhost:5000/studios");
-    if (!res.ok) {
-        throw new Error("Failed to fetch studios");
-    }
-    const studios: IStudio[] = await res.json();
+  const res = await fetch("http://localhost:5000/studios");
+  if (!res.ok) {
+    throw new Error("Failed to fetch studios");
+  }
+  const studios: IStudio[] = await res.json();
 
-    const allCategories = [...new Set(studios.map((category) => category.category))];
-
-
-    return (
-        <div>
-            <h2>Explore Studios</h2>
-        </div>
-    );
+  return (
+    <main className="overflow-hidden bg-bg-page">
+      <StudiosExplorer studios={studios} initialCategory={Array.isArray(category) ? category[0] : category} />
+    </main>
+  );
 };
 
 export default ExploreStudioPage;
