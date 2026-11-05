@@ -52,7 +52,7 @@ const StudioDetailsPage = async ({ params }: { params: Promise<{ Id: string[] }>
   const user = session?.user;
   const imageUrl = getImageUrl(user?.image);
 
-  const res = await fetch(`http://localhost:5000/studios/${studioId}`, { cache: "no-store" });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios/${studioId}`, { cache: "no-store" });
 
   if (res.status === 404) {
     notFound();

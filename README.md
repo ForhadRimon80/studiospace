@@ -128,7 +128,7 @@ Add the examiner account details here before submission:
 
 ```text
 Email: your-examiner-email@example.com
-Password: your-examiner-password
+Password: Your-examiner-password
 ```
 
 Do not commit real secrets or private credentials to the repository.

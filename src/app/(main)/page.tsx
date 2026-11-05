@@ -6,7 +6,7 @@ import HowItWorks from "@/components/home/HowItWorks";
 
 const Home = async () => {
 
-  const res = await fetch("http://localhost:5000/studios");
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`);
   if (!res.ok) {
     throw new Error("Failed to fetch studios");
   }

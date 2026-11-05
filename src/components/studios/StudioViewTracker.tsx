@@ -6,7 +6,7 @@ const StudioViewTracker = ({ studioId }: { studioId: string }) => {
   useEffect(() => {
     const trackView = async () => {
       try {
-        await fetch(`http://localhost:5000/studios/${studioId}/views`, {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios/${studioId}/views`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

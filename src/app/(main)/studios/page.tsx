@@ -4,7 +4,7 @@ import type { IStudio } from "@/lib/types/studiospace";
 const ExploreStudioPage = async ({ searchParams }: { searchParams: Promise<{ category?: string | string[] }> }) => {
   const { category } = await searchParams;
 
-  const res = await fetch("http://localhost:5000/studios");
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`);
   if (!res.ok) {
     throw new Error("Failed to fetch studios");
   }
