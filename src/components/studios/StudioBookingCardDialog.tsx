@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import type { IStudio } from "@/lib/types/studiospace";
 import { useSession } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const fieldClassName = "h-11 rounded-xl border-border bg-bg-page px-3 text-sm shadow-none";
 
@@ -28,6 +28,7 @@ function formatMoney(value: number) {
 
 const StudioBookingCardDialog = ({ studio, rating }: { studio: IStudio; rating: string }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [shootDate, setShootDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [startTime, setStartTime] = useState("10:00");
@@ -36,11 +37,9 @@ const StudioBookingCardDialog = ({ studio, rating }: { studio: IStudio; rating: 
   const [notes, setNotes] = useState("");
 
   const hourlyRate = Number(studio.hourlyRate) || 0;
-//   console.log(hourlyRate);
   const securityDeposit = Number(studio.securityDeposit) || 0;
 
   const durationHours = Math.max((timeToMinutes(endTime) - timeToMinutes(startTime)) / 60, 0);
-//   console.log(durationHours);
 
   const subtotal = hourlyRate * durationHours;
   const total = subtotal + securityDeposit;
@@ -50,6 +49,16 @@ const StudioBookingCardDialog = ({ studio, rating }: { studio: IStudio; rating: 
   // Get the current session and user information (client side)
   const { data: session } = useSession();
   const user = session?.user;
+
+  const handleBookingTrigger = () => {
+    if (!user) {
+      const callbackURL = `${pathname}?booking=login`;
+      router.push(`/login?callbackURL=${encodeURIComponent(callbackURL)}`);
+      return;
+    }
+
+    setOpen(true);
+  };
 
   // Handle booking form submission
   const handleBookingSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -69,13 +78,12 @@ const StudioBookingCardDialog = ({ studio, rating }: { studio: IStudio; rating: 
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
 
-    // console.log(data);
 
     const updatedData = {
       bookingUserName: user?.name || "Guest",
       bookingUserEmail: user?.email || "guest@example.com",
       ...data,
-      status: "Pending Host Approval",
+      status: "Pending",
       ...studio,
       totalCost: total,
       durationHours: durationHours,
@@ -95,9 +103,7 @@ const StudioBookingCardDialog = ({ studio, rating }: { studio: IStudio; rating: 
         throw new Error("Failed to submit booking request");
       }
 
-      // Get the response from the backend
-      const afterSubmit = await res.json();
-      console.log("Data after submission:", afterSubmit);
+      await res.json();
 
       toast.add({
         title: "Booking request sent",
@@ -120,7 +126,11 @@ const StudioBookingCardDialog = ({ studio, rating }: { studio: IStudio; rating: 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button type="button" className="mt-6 h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground hover:bg-primary/90" />}>
+      <DialogTrigger
+        render={
+          <Button type="button" onClick={handleBookingTrigger} className="mt-6 h-12 w-full rounded-xl bg-primary text-sm font-semibold text-primary-foreground hover:bg-primary/90" />
+        }
+      >
         <CalendarDays className="size-4" />
         Book Workspace Now
       </DialogTrigger>

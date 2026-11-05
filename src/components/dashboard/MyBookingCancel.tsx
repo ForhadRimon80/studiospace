@@ -1,54 +1,61 @@
 "use client";
-import { IBooking } from '@/lib/types/studiospace';
-import React from 'react';
-import { Button } from '../ui/button';
-import { XCircle } from 'lucide-react';
+
+import { XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from '../ui/toast';
+import { useSession } from "@/lib/auth-client";
+import type { IBooking } from "@/lib/types/studiospace";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 
-const MyBookingCancel = ({ booking } : { booking: IBooking }) => {
+const MyBookingCancel = ({ booking }: { booking: IBooking }) => {
+  const router = useRouter();
+  const { data: session } = useSession();
 
-    const router = useRouter();
+  const handleCancelBooking = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/dashboard/${booking._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: "Cancelled",
+          requesterEmail: session?.user?.email,
+        }),
+      });
 
-    const studioId = booking._id;
-    console.log(studioId);
-      const handleCancelBooking = async () => {
-        // Send the data to the backend
-        try {
-          const res = await fetch(`http://localhost:5000/my-bookings/${studioId}`, {
-            method: "DELETE",
-          });
+      const result = await res.json();
 
-          // Get the response from the backend, convert it to JSON, and log the returned data.
-          const afterDelete = await res.json();
-          console.log("Data after submission:", afterDelete);
+      if (!res.ok) {
+        throw new Error(result.message ?? "Booking could not be cancelled.");
+      }
 
-          if (!res.ok || !afterDelete.deletedCount) {
-            throw new Error(afterDelete.message ?? "Booking could not be deleted.");
-          } else {
-            toast.add({
-              title: "Deleting successful",
-              description: "The booking has been successfully deleted.",
-              type: "success",
-            });
-            router.refresh();
-          }
-        } catch (error) {
-          toast.add({
-            title: "Deleting failed",
-            description: error instanceof Error ? error.message : "Something went wrong while deleting the booking.",
-            type: "error",
-          });
-        }
-      };
+      toast.add({
+        title: "Cancellation successful",
+        description: "The booking has been cancelled.",
+        type: "success",
+      });
+      router.refresh();
+    } catch (error) {
+      toast.add({
+        title: "Cancellation failed",
+        description: error instanceof Error ? error.message : "Something went wrong while cancelling the booking.",
+        type: "error",
+      });
+    }
+  };
 
   return (
-    <div>
-      <Button type="button" variant="outline" onClick={handleCancelBooking} className="h-9 rounded-full border-red-200 bg-red-50/60 px-4 text-xs font-semibold text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20">
+    <Button
+      type="button"
+      disabled={!booking.status?.toLowerCase().includes("pending")}
+      variant="outline"
+      onClick={handleCancelBooking}
+      className="h-9 rounded-full border-red-200 bg-red-50/60 px-4 text-xs font-semibold text-red-600 hover:bg-red-50 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20"
+    >
         <XCircle className="size-3.5" />
         Cancel Booking
-      </Button>
-    </div>
+    </Button>
   );
 };
 

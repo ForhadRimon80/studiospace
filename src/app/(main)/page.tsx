@@ -11,11 +11,9 @@ const Home = async () => {
     throw new Error("Failed to fetch studios");
   }
   const studios = await res.json();
-  // console.log(studios);
 
   //Latest 6 studios
   const latestStudios = studios.slice(0, 6);
-  console.log("Latest 6 studios:", latestStudios);
 
   return (
     <main className="overflow-hidden bg-bg-page">

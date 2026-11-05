@@ -41,7 +41,6 @@ const EditMyStudioDialog = ({ studio }: { studio: IStudio }) => {
   // Get the current session and user information (client side)
   const { data: session } = useSession();
   const user = session?.user;
-  // console.log(user);
 
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -70,7 +69,6 @@ const EditMyStudioDialog = ({ studio }: { studio: IStudio }) => {
 
       // Get the response from the backend, convert it to JSON, and log the returned data.
       const afterUpdate = await res.json();
-      console.log("Data after submission:", afterUpdate);
 
       if (!res.ok || !afterUpdate.modifiedCount) {
         throw new Error(afterUpdate.message ?? "The studio listing could not be updated.");

@@ -42,7 +42,6 @@ const DashboardSidebar = ({ isSidebarOpen, setIsSidebarOpen }: DashboardSidebarP
   const { data: session } = useSession();
   const user = session?.user;
   const imageUrl = getImageUrl(user?.image);
-  // console.log(user);
 
   const navLinks = [
     { label: "Home", icon: House, href: "/" },

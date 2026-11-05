@@ -41,7 +41,6 @@ const AddNewStudioPage = () => {
   // Get the current session and user information (client side)
   const { data: session } = useSession();
   const user = session?.user;
-  // console.log(user);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -61,7 +60,6 @@ const AddNewStudioPage = () => {
       amenities: selectedAmenities,
       views: "0", // Initialize views to 0
     };
-    // console.log(studioData);
 
     // Send the data to the backend
     try {
@@ -75,7 +73,6 @@ const AddNewStudioPage = () => {
 
       // Get the response from the backend, convert it to JSON, and log the returned data.
       const afterSubmit = await res.json();
-      console.log("Data after submission:", afterSubmit);
 
       if (!res.ok || !afterSubmit.insertedId) {
         throw new Error(afterSubmit.message ?? "The Add New Studio form could not be submitted.");

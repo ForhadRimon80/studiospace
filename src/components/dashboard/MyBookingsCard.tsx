@@ -28,6 +28,13 @@ const getStatusStyle = (status: string): { badge: string; icon: LucideIcon } => 
     };
   }
 
+  if (value.includes("complete")) {
+    return {
+      badge: "bg-blue-50 text-blue-700 ring-blue-200 dark:bg-blue-500/15 dark:text-blue-300 dark:ring-blue-500/30",
+      icon: CalendarDays,
+    };
+  }
+
   if (value.includes("cancel") || value.includes("declin") || value.includes("reject")) {
     return {
       badge: "bg-red-50 text-red-600 ring-red-200 dark:bg-red-500/15 dark:text-red-300 dark:ring-red-500/30",

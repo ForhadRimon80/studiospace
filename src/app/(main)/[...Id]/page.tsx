@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { BadgeCheck, CheckCircle2, Mail, MapPin, ShieldCheck, Star } from "lucide-react";
 
 import StudioBookingCard from "@/components/studios/StudioBookingCard";
+import StudioViewTracker from "@/components/studios/StudioViewTracker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { IStudio } from "@/lib/types/studiospace";
 import { auth } from "@/lib/auth";
@@ -68,6 +69,8 @@ const StudioDetailsPage = async ({ params }: { params: Promise<{ Id: string[] }>
 
   return (
     <main className="bg-bg-page">
+      <StudioViewTracker studioId={studio._id} />
+
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         {/* Category & location */}
         <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -119,6 +122,7 @@ const StudioDetailsPage = async ({ params }: { params: Promise<{ Id: string[] }>
                     <dd className="mt-1 flex flex-wrap items-center gap-1.5">
                       <Star className="size-5 fill-amber-400 text-amber-400" />
                       <span className="text-lg font-extrabold text-text-primary">{rating}</span>
+                      <span className="text-xs text-text-secondary">({studio.views ?? 0} reviews)</span>
                     </dd>
                   </div>
                 </dl>

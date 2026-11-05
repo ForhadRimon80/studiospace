@@ -44,7 +44,15 @@ const DashboardNavbar = ({ setIsSidebarOpen }: DashboardNavbarProps) => {
         </div>
 
         {/* Theme - Right */}
-        <Button type="button" variant="ghost" size="icon" className="shrink-0 boder border-[#dce6e1] hover:bg-[#f0f3f5] dark:border-border dark:hover:bg-bg-surface" onClick={toggleTheme} aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="shrink-0 border border-[#dce6e1] bg-white hover:bg-[#f0f3f5] dark:border-border dark:bg-bg-surface dark:hover:bg-muted"
+          onClick={toggleTheme}
+          aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
+          aria-pressed={isDark}
+        >
           {isDark ? <Sun /> : <Moon />}
         </Button>
       </div>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, Eye, MapPin, Plus, Store, Users } from "lucide-react";
+import { CalendarDays, Eye, MapPin, Plus, Store, Users, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { IStudio } from "@/lib/types/studiospace";
 import { auth } from "@/lib/auth";
@@ -14,7 +14,6 @@ const MyStudioListingsPage = async () => {
     headers: await headers(),
   });
   const user = session?.user;
-  // console.log("user:", user);
 
   // Fetch studios
   const res = await fetch(`http://localhost:5000/my-studio-listings/${user?.id}`, {
@@ -26,7 +25,6 @@ const MyStudioListingsPage = async () => {
   }
 
   const studios: IStudio[] = await res.json();
-  // console.log("studios:", studios);
 
   // Statistics
   const stats = [
@@ -120,9 +118,19 @@ const MyStudioListingsPage = async () => {
                       <p className="inline-flex items-center rounded-full bg-[#d9f9df] px-3 py-2 text-xs font-semibold text-[#087a43] dark:bg-[#173d2c] dark:text-[#b8f36b]">Deposit: ${studio.securityDeposit}</p>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <EditMyStudioDialog studio={studio} />
-                      <DeleteMyStudioDialog studio={studio} />
+                    <div className="flex w-full items-center justify-between gap-2">
+                      <Link
+                        href={`/studios/${studio._id}`}
+                        className="inline-flex h-8 items-center gap-1.5 rounded-full border border-[#087a43]/25 bg-[#f0fbf2] px-3 text-xs font-semibold text-[#087a43] transition-colors hover:bg-[#d9f9df] dark:border-[#b8f36b]/30 dark:bg-[#173d2c] dark:text-[#b8f36b] dark:hover:bg-[#20543a]"
+                      >
+                        Details
+                        <ArrowRight className="size-3.5" />
+                      </Link>
+
+                      <div className="flex items-center gap-2">
+                        <EditMyStudioDialog studio={studio} />
+                        <DeleteMyStudioDialog studio={studio} />
+                      </div>
                     </div>
                   </div>
                 </CardContent>

@@ -153,7 +153,7 @@ const LoginPage = () => {
 
             <p className="mt-7 text-center text-sm text-text-secondary dark:text-[#64748B]">
               Don&apos;t have an account?{" "}
-              <Link href="/register" className="font-semibold text-primary-green underline underline-offset-2 dark:text-[#087A43]">
+              <Link href="/signup" className="font-semibold text-primary-green underline underline-offset-2 dark:text-[#087A43]">
                 Register
               </Link>
             </p>

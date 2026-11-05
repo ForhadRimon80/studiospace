@@ -1,36 +1,140 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudioSpace
 
-## Getting Started
+StudioSpace is a peer-to-peer marketplace for discovering, listing, and booking creative studios, event spaces, photography locations, music studios, and other production spaces.
 
-First, run the development server:
+## Live Site
+
+**Live URL:** Not deployed yet
+
+## Features
+
+- Browse studios with category filtering, location, pricing, capacity, and rating information.
+- View detailed studio pages with amenities, host information, booking details, and view tracking.
+- Create an account with email/password authentication or Google sign-in.
+- Hosts can add, edit, view, and delete their studio listings.
+- Users can reserve studio spaces with selected dates, times, crew counts, notes, and calculated pricing.
+- Dashboard with studio statistics, recent bookings, and booking status management.
+- My Bookings page with booking receipts, statuses, and booking cancellation controls.
+- Responsive light and dark themes with persistent theme selection.
+- Toast notifications and confirmation dialogs for user feedback and destructive actions.
+
+## Tech Stack
+
+### Client
+
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- Base UI and shadcn/ui components
+- Lucide React and React Icons
+- Embla Carousel
+
+### Authentication and data
+
+- Better Auth
+- MongoDB with Better Auth MongoDB adapter
+- Express.js API server
+- MongoDB database
+
+## Project Structure
+
+The project uses two applications:
+
+- `studiospace/` — Next.js client application
+- `studiospace-server/` — Express.js and MongoDB API server
+
+## Local Setup
+
+### Requirements
+
+- Node.js 20 or newer
+- npm
+- MongoDB database
+
+### 1. Start the API server
+
+```bash
+cd studiospace-server
+npm install
+```
+
+Create a `.env` file in `studiospace-server/`:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+PORT=5000
+```
+
+Start the server:
+
+```bash
+node index.js
+```
+
+The API server runs at `http://localhost:5000`.
+
+### 2. Start the Next.js client
+
+```bash
+cd studiospace
+npm install
+```
+
+Create a `.env` file in `studiospace/`:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+BETTER_AUTH_SECRET=your_better_auth_secret
+BETTER_AUTH_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Client Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+npm run lint
+npx tsc --noEmit
+npm run build
+```
 
-## Learn More
+## Main Routes
 
-To learn more about Next.js, take a look at the following resources:
+- `/` — Home page
+- `/studios` — Explore studios
+- `/studios/[id]` — Studio details and booking
+- `/login` — Login
+- `/signup` — Registration
+- `/dashboard` — Host dashboard
+- `/add-new-studio` — Add a studio listing
+- `/my-studio-listings` — Manage studio listings
+- `/my-bookings` — View personal bookings
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Examiner Test Credentials
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Test credentials have not been added to this repository yet.
 
-## Deploy on Vercel
+Add the examiner account details here before submission:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+Email: your-examiner-email@example.com
+Password: your-examiner-password
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Do not commit real secrets or private credentials to the repository.
+
+## Notes
+
+- Start the Express API server before opening pages that load studios, listings, bookings, or dashboard data.
+- Keep `.env` files private and never commit them.
+- The client and server are maintained as separate applications and repositories for submission.

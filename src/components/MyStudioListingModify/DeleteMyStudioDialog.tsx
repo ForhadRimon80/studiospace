@@ -18,7 +18,6 @@ const DeleteMyStudioDialog = ({ studio }: { studio: IStudio }) => {
 
       // Get the response from the backend, convert it to JSON, and log the returned data.
       const afterDelete = await res.json();
-      console.log("Data after submission:", afterDelete);
 
       if (!res.ok || !afterDelete.deletedCount) {
         throw new Error(afterDelete.message ?? "The studio could not be deleted.");
