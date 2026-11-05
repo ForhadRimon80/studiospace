@@ -5,6 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { IStudio } from "@/lib/types/studiospace";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { serverApiFetch } from "@/lib/api-server";
 import EditMyStudioDialog from "@/components/MyStudioListingModify/EditMyStudioDialog";
 import DeleteMyStudioDialog from "@/components/MyStudioListingModify/DeleteMyStudioDialog";
 
@@ -15,8 +17,12 @@ const MyStudioListingsPage = async () => {
   });
   const user = session?.user;
 
+  if (!user?.id) {
+    redirect("/login");
+  }
+
   // Fetch studios
-  const res = await fetch(`http://localhost:5000/my-studio-listings/${user?.id}`, {
+  const res = await serverApiFetch(`/my-studio-listings/${user.id}`, {
     cache: "no-store",
   });
 

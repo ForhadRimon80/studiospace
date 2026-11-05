@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import { useSession } from "@/lib/auth-client";
+import { apiFetch } from "@/lib/api-client";
 import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -63,7 +64,7 @@ const AddNewStudioPage = () => {
 
     // Send the data to the backend
     try {
-      const res = await fetch("http://localhost:5000/add-new-studio", {
+      const res = await apiFetch("/add-new-studio", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

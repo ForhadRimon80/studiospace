@@ -2,25 +2,23 @@
 
 import { XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
 import type { IBooking } from "@/lib/types/studiospace";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
+import { apiFetch } from "@/lib/api-client";
 
 const MyBookingCancel = ({ booking }: { booking: IBooking }) => {
   const router = useRouter();
-  const { data: session } = useSession();
 
   const handleCancelBooking = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/dashboard/${booking._id}`, {
+      const res = await apiFetch(`/dashboard/${booking._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           status: "Cancelled",
-          requesterEmail: session?.user?.email,
         }),
       });
 

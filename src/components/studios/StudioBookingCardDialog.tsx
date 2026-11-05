@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import type { IStudio } from "@/lib/types/studiospace";
 import { useSession } from "@/lib/auth-client";
+import { apiFetch } from "@/lib/api-client";
 import { usePathname, useRouter } from "next/navigation";
 
 const fieldClassName = "h-11 rounded-xl border-border bg-bg-page px-3 text-sm shadow-none";
@@ -91,7 +92,7 @@ const StudioBookingCardDialog = ({ studio, rating }: { studio: IStudio; rating: 
 
     try {
       // Send the data to the backend
-      const res = await fetch("http://localhost:5000/booking", {
+      const res = await apiFetch("/booking", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

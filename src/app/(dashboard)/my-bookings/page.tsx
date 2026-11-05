@@ -6,6 +6,7 @@ import { ArrowRight, CalendarDays } from "lucide-react";
 import MyBookingsCard from "@/components/dashboard/MyBookingsCard";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
+import { serverApiFetch } from "@/lib/api-server";
 import type { IBooking } from "@/lib/types/studiospace";
 
 const MyBookingsPage = async () => {
@@ -19,7 +20,7 @@ const MyBookingsPage = async () => {
     redirect("/login");
   }
 
-  const res = await fetch(`http://localhost:5000/bookings/${encodeURIComponent(user?.email)}`, {
+  const res = await serverApiFetch(`/bookings/${encodeURIComponent(user.email)}`, {
     cache: "no-store",
   });
 

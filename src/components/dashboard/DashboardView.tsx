@@ -8,11 +8,12 @@ import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescript
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
+import { apiFetch } from "@/lib/api-client";
 import type { IBooking } from "@/lib/types/studiospace";
 
 type BookingStatus = "Confirmed" | "Completed" | "Cancelled";
 
-const DashboardView = ({ booking, hostEmail }: { booking: IBooking; hostEmail: string }) => {
+const DashboardView = ({ booking }: { booking: IBooking }) => {
   const router = useRouter();
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -23,12 +24,12 @@ const DashboardView = ({ booking, hostEmail }: { booking: IBooking; hostEmail: s
     setIsUpdating(true);
 
     try {
-      const res = await fetch(`http://localhost:5000/dashboard/${booking._id}`, {
+      const res = await apiFetch(`/dashboard/${booking._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status, requesterEmail: hostEmail }),
+        body: JSON.stringify({ status }),
       });
 
       const responseText = await res.text();

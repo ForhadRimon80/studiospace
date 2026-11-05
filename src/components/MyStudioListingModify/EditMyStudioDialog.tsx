@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import { useSession } from "@/lib/auth-client";
+import { apiFetch } from "@/lib/api-client";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { IStudio } from "@/lib/types/studiospace";
@@ -59,7 +60,7 @@ const EditMyStudioDialog = ({ studio }: { studio: IStudio }) => {
 
     // Send the data to the backend
     try {
-      const res = await fetch(`http://localhost:5000/my-studio-listings/${studio._id}`, {
+      const res = await apiFetch(`/my-studio-listings/${studio._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

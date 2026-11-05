@@ -7,6 +7,7 @@ import DashboardView from "@/components/dashboard/DashboardView";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
+import { serverApiFetch } from "@/lib/api-server";
 import type { IBooking } from "@/lib/types/studiospace";
 
 
@@ -21,7 +22,7 @@ const DashboardPage = async () => {
     redirect("/login");
   }
 
-  const res = await fetch(`http://localhost:5000/dashboard/${encodeURIComponent(user.email)}`, {
+  const res = await serverApiFetch(`/dashboard/${encodeURIComponent(user.email)}`, {
     cache: "no-store",
   });
 
@@ -229,7 +230,7 @@ const DashboardPage = async () => {
                         </td>
 
                         <td className="px-5 py-3 text-right">
-                          <DashboardView booking={booking} hostEmail={user.email} />
+                          <DashboardView booking={booking} />
                         </td>
                       </tr>
                     );

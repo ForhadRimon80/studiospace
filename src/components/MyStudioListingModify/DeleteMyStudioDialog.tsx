@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { toast } from "../ui/toast";
 import { useRouter } from "next/navigation";
 import { IStudio } from "@/lib/types/studiospace";
+import { apiFetch } from "@/lib/api-client";
 
 const DeleteMyStudioDialog = ({ studio }: { studio: IStudio }) => {
   const router = useRouter();
@@ -12,7 +13,7 @@ const DeleteMyStudioDialog = ({ studio }: { studio: IStudio }) => {
   const handleDeleteStudio = async () => {
     // Send the data to the backend
     try {
-      const res = await fetch(`http://localhost:5000/my-studio-listings/${studio._id}`, {
+      const res = await apiFetch(`/my-studio-listings/${studio._id}`, {
         method: "DELETE",
       });
 
