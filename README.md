@@ -4,7 +4,7 @@ StudioSpace is a peer-to-peer marketplace for discovering, listing, and booking 
 
 ## Live Site
 
-**Live URL:** Not deployed yet
+**Live URL:** [Studio_Space](https://studiospace-olive.vercel.app)
 
 ## Features
 
